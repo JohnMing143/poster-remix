@@ -150,7 +150,7 @@
         </div>
         <div class="form-group">
             <label for="imageSize">图像尺寸：</label>
-            <input type="text" id="imageSize" value="500x300" placeholder="宽x高">
+            <input type="text" id="imageSize" value="500x300">
         </div>
         <div class="form-group">
             <label for="lightEffect">光效：</label>
@@ -168,32 +168,37 @@
                 <option value="canvas">画布</option>
             </select>
         </div>
-        <button onclick="generatePoster()">生成海报</button>
-        <button onclick="resetForm()">重置设置</button>
-        <img id="preview" alt="预览图片">
-        <a id="downloadLink" style="display:none;">下载PNG图片</a>
-        <footer>&copy; 2024 PosterMaker | Made by ChatGPT</footer>
+        <div class="form-group">
+            <button onclick="generatePoster()">生成海报</button>
+            <button onclick="resetForm()">重置</button>
+        </div>
+        <img id="preview" alt="预览">
+        <a id="downloadLink" download="poster.png">下载海报</a>
     </div>
-
+    <footer>
+        版权 &copy; 2024 由 ChatGPT 制作
+    </footer>
     <script>
-        document.getElementById('bgType').addEventListener('change', function () {
-            const bgType = document.getElementById('bgType').value;
+        document.getElementById('bgType').addEventListener('change', function() {
+            const bgType = this.value;
+            const bgColorGroup = document.getElementById('bgColorGroup');
+            const gradientColors = document.getElementById('gradientColors');
             if (bgType === 'gradient') {
-                document.getElementById('bgColorGroup').style.display = 'none';
-                document.getElementById('gradientColors').style.display = 'block';
+                bgColorGroup.style.display = 'none';
+                gradientColors.style.display = 'block';
             } else {
-                document.getElementById('bgColorGroup').style.display = 'block';
-                document.getElementById('gradientColors').style.display = 'none';
+                bgColorGroup.style.display = 'block';
+                gradientColors.style.display = 'none';
             }
         });
 
         async function generatePoster() {
             const text = document.getElementById('text').value;
-            const fontSize = document.getElementById('fontSize').value;
+            const fontSize = parseInt(document.getElementById('fontSize').value);
             const fontColor = document.getElementById('fontColor').value;
             const fontFamily = document.getElementById('fontFamily').value;
             const textAlign = document.getElementById('textAlign').value;
-            const lineHeight = document.getElementById('lineHeight').value;
+            const lineHeight = parseFloat(document.getElementById('lineHeight').value);
             const bgType = document.getElementById('bgType').value;
             const bgColor = document.getElementById('bgColor').value;
             const gradientColor1 = document.getElementById('gradientColor1').value;
@@ -236,7 +241,6 @@
             preview.style.display = 'block';
             downloadLink.href = url;
             downloadLink.style.display = 'block';
-            downloadLink.download = 'poster.png';
         }
 
         function resetForm() {
