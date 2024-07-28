@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PosterMaker - 海报制作器</title>
+    <style>
+        @font-face {
+            font-family: 'Huawen Mincho';
+            src: url('fonts/HuawenMingTi.woff') format('woff');
+        }
+        @font-face {
+            font-family: 'Source Han Serif SC';
+            src: url('fonts/SourceHanSerifSC-Regular.woff') format('woff');
+        }
+        @font-face {
+            font-family: 'EVA';
+            src: url('fonts/EVA.woff') format('woff');
+        }
+        body {
+            font-family: 'Source Han Serif SC', serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            font-family: 'Huawen Mincho', serif;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        textarea, input[type="number"], input[type="color"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #preview {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            display: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #downloadLink {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+            color: #3498db;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PosterMaker</h1>
+        <div class="form-group">
+            <label for="text">文本内容：</label>
+            <textarea id="text" rows="3" placeholder="输入您的文本"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="fontSize">字体大小：</label>
+            <input type="number" id="fontSize" value="30" min="10" max="100">
+        </div>
+        <div class="form-group">
+            <label for="fontColor">字体颜色：</label>
+            <input type="color" id="fontColor" value="#000000">
+        </div>
+        <div class="form-group">
+            <label for="fontFamily">字体：</label>
+            <select id="fontFamily">
+                <option value="'Source Han Serif SC', serif">思源宋</option>
+                <option value="'Huawen Mincho', serif">回文明朝体</option>
+                <option value="'EVA', serif">EVA</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="textAlign">对齐方式：</label>
+            <select id="textAlign">
+                <option value="start">左对齐</option>
+                <option value="center">居中对齐</option>
+                <option value="end">右对齐</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="lineHeight">行间距：</label>
+            <input type="number" id="lineHeight" value="1.2" step="0.1" min="1" max="2">
+        </div>
+        <div class="form-group">
+            <label for="bgType">背景类型：</label>
+            <select id="bgType">
+                <option value="color">纯色</option>
+                <option value="gradient">渐变</option>
+            </select>
+        </div>
+        <div class="form-group" id="bgColorGroup">
+            <label for="bgColor">背景颜色：</label>
+            <input type="color" id="bgColor" value="#ffffff">
+        </div>
+        <div class="form-group" id="gradientColors" style="display: none;">
+            <label for="gradientColor1">渐变颜色1：</label>
+            <input type="color" id="gradientColor1" value="#ffffff">
+            <label for="gradientColor2">渐变颜色2：</label>
+            <input type="color" id="gradientColor2" value="#a0a0a0">
+            <label for="gradientColor3">渐变颜色3：</label>
+            <input type="color" id="gradientColor3" value="#f0f0f0">
+        </div>
+        <div class="form-group">
+            <label for="imageSize">图像尺寸：</label>
+            <input type="text" id="imageSize" value="500x300" placeholder="宽x高">
+        </div>
+        <div class="form-group">
+            <label for="lightEffect">光效：</label>
+            <select id="lightEffect">
+                <option value="none">无</option>
+                <option value="window">窗口光</option>
+                <option value="spotlight">聚光灯</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="paperTexture">纸张纹理：</label>
+            <select id="paperTexture">
+                <option value="none">无</option>
+                <option value="rough">粗糙</option>
+                <option value="canvas">画布</option>
+            </select>
+        </div>
+        <button onclick="generatePoster()">生成海报</button>
+        <button onclick="resetForm()">重置设置</button>
+        <img id="preview" alt="预览图片">
+        <a id="downloadLink" style="display:none;">下载PNG图片</a>
+        <footer>&copy; 2024 PosterMaker | Made by ChatGPT</footer>
+    </div>
+
+    <script>
+        document.getElementById('bgType').addEventListener('change', function () {
+            const bgType = document.getElementById('bgType').value;
+            if (bgType === 'gradient') {
+                document.getElementById('bgColorGroup').style.display = 'none';
+                document.getElementById('gradientColors').style.display = 'block';
+            } else {
+                document.getElementById('bgColorGroup').style.display = 'block';
+                document.getElementById('gradientColors').style.display = 'none';
+            }
+        });
+
+        async function generatePoster() {
+            const text = document.getElementById('text').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const fontColor = document.getElementById('fontColor').value;
+            const fontFamily = document.getElementById('fontFamily').value;
+            const textAlign = document.getElementById('textAlign').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            const bgType = document.getElementById('bgType').value;
+            const bgColor = document.getElementById('bgColor').value;
+            const gradientColor1 = document.getElementById('gradientColor1').value;
+            const gradientColor2 = document.getElementById('gradientColor2').value;
+            const gradientColor3 = document.getElementById('gradientColor3').value;
+            const imageSize = document.getElementById('imageSize').value.split('x');
+            const width = parseInt(imageSize[0]);
+            const height = parseInt(imageSize[1]);
+            const lightEffect = document.getElementById('lightEffect').value;
+            const paperTexture = document.getElementById('paperTexture').value;
+
+            const response = await fetch('/api/generate-poster', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    text,
+                    fontSize,
+                    fontColor,
+                    fontFamily,
+                    textAlign,
+                    lineHeight,
+                    bgType,
+                    bgColor,
+                    bgGradient: `${gradientColor1},${gradientColor2},${gradientColor3}`,
+                    width,
+                    height,
+                    lightEffect,
+                    paperTexture,
+                }),
+            });
+
+            const blob = await response.blob();
+            const preview = document.getElementById('preview');
+            const downloadLink = document.getElementById('downloadLink');
+            const url = URL.createObjectURL(blob);
+
+            preview.src = url;
+            preview.style.display = 'block';
+            downloadLink.href = url;
+            downloadLink.style.display = 'block';
+            downloadLink.download = 'poster.png';
+        }
+
+        function resetForm() {
+            document.getElementById('text').value = '';
+            document.getElementById('fontSize').value = 30;
+            document.getElementById('fontColor').value = '#000000';
+            document.getElementById('fontFamily').value = "'Source Han Serif SC', serif";
+            document.getElementById('textAlign').value = 'center';
+            document.getElementById('lineHeight').value = 1.2;
+            document.getElementById('bgType').value = 'color';
+            document.getElementById('bgColor').value = '#ffffff';
+            document.getElementById('gradientColor1').value = '#ffffff';
+            document.getElementById('gradientColor2').value = '#a0a0a0';
+            document.getElementById('gradientColor3').value = '#f0f0f0';
+            document.getElementById('imageSize').value = '500x300';
+            document.getElementById('lightEffect').value = 'none';
+            document.getElementById('paperTexture').value = 'none';
+            document.getElementById('preview').style.display = 'none';
+            document.getElementById('downloadLink').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
